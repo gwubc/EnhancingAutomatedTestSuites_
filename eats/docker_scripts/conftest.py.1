@@ -1,0 +1,14 @@
+import os
+import pytest
+
+# Copy from ANDgineer https://stackoverflow.com/questions/48054392/pytest-how-to-get-a-list-of-all-failed-tests-at-the-end-of-the-session-and-wh
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    rep = outcome.get_result()
+    if rep.when == 'call' and rep.failed:
+        mode = 'a' if os.path.exists('/workplace/share_data/failed_tests.txt') else 'w'
+        try:
+            print(f"{item.location[0]}::{item.location[2]}", file=open('/workplace/share_data/failed_tests.txt', mode))
+        except Exception as e:
+            pass

@@ -1,0 +1,23 @@
+import os
+import pytest
+
+import os
+import pytest
+
+def pytest_collection_modifyitems(config, items):
+    skip_tests = set()
+    if os.path.exists('/workplace/share_data/failed_tests.txt'):
+        with open('/workplace/share_data/failed_tests.txt') as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    skip_tests.add(line)
+
+    skip_marker = pytest.mark.skip(reason="Test skipped by ignore.txt")
+
+    for item in items:
+        file_name = item.location[0]
+        test_name = item.location[2]
+        if f"{file_name}::{test_name}" in skip_tests:
+            print(f"Skip {file_name}::{test_name}")
+            item.add_marker(skip_marker)

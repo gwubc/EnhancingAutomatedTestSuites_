@@ -1,0 +1,10 @@
+pytest
+pytest-cov
+pytest-timeout
+pynguin
+atheris 
+astor 
+autoflake 
+black
+psutil
+lxml

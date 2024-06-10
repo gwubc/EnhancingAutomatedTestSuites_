@@ -1,0 +1,1 @@
+python -m pytest -x --timeout 5 /workplace/tests/**
