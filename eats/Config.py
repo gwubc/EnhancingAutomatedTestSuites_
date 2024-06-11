@@ -18,3 +18,5 @@ class Config:
 
     max_fuzz_time: int
     max_fuzz_iterations: int
+
+    imprve_with_fuzzing: bool

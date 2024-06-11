@@ -5,4 +5,5 @@ pynguin \
     --module-name $module_name \
     --maximum-search-time $maximum_search_time \
     --maximum-iterations $maximum_iterations \
+    --seed 1 \
     -v

@@ -126,6 +126,10 @@ def create_docker_container(docer_config: DockerContainerConfig) -> docker.model
     Returns:
         docker.models.containers.Container: Docker container instance.
     """
+
+    for k in docer_config.volumes:
+        assert k.startswith('/'), f"Volume {k} must be absolute path. Got {k}"
+        
     common_params = {
         'volumes': docer_config.volumes,
         'environment': docer_config.environment,

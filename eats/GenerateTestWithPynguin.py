@@ -27,6 +27,6 @@ def create_test_with_pynguin(module: str, working_dir: str, maximum_search_time:
         detach=True,
     ))
     logging.info("Running pynguin: %s, container.id: %s", module, container.id[:10])
-    exit_code, log, time_used = wait_for_container(container, maximum_search_time * 3, f"{working_dir}/logs/pynguin/{module}.log")
+    exit_code, log, time_used = wait_for_container(container, maximum_search_time + 300, f"{working_dir}/logs/pynguin/{module}.log")
     logging.info("pynguin %s exited with %s, time used: %.2f seconds", module, exit_code, time_used)
     return exit_code

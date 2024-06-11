@@ -15,12 +15,13 @@ def _module_find_all(PROJECT_ROOT: str, path_to_modules: str) -> typing.List[str
         List[str]: A sorted list of module names.
     """
     modules = []
-    for file in glob.glob(path_to_modules):
+    for file in glob.glob(path_to_modules, recursive = True):
         if not file.endswith(".py"):
             continue
         subpath = os.path.relpath(file, PROJECT_ROOT)
         moduleName = subpath.replace("/", ".")[:-3]
-        modules.append(moduleName)
+        if moduleName not in modules:
+            modules.append(moduleName)
     modules = sorted(modules)
     return modules
 

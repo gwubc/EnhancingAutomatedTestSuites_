@@ -60,7 +60,7 @@ class ImproveUseFuzzer:
             command='python /usr/src/scripts_fuzzer/runfuzz.py',
             ))
             logging.info(f"Running fuzzed_results: {self.module}::{fuzz_test}, container.id: {container.id[:10]}")
-            exit_code, log, time_used = wait_for_container(container, self.max_fuzz_time * 3, f"{self.working_dir}/logs/fuzzed_results/{self.module}/{fuzz_test}.log")
+            exit_code, log, time_used = wait_for_container(container, self.max_fuzz_time  + 300, f"{self.working_dir}/logs/fuzzed_results/{self.module}/{fuzz_test}.log")
             logging.info(f"fuzzed_results {self.module}::{fuzz_test} exited with {exit_code}")
             return exit_code, log, time_used
         return fuzz_runner
@@ -74,22 +74,6 @@ class ImproveUseFuzzer:
             self.health = False
             return []
         return [self._fuzz_runner(fuzz_test) for fuzz_test in fuzz_tests]
-
-    # def run_fuzzed_results(self):
-    #     if not self.health:
-    #         return 1, "No fuzz tests generated", 0
-        
-    #     container = create_docker_container(DockerContainerConfig(
-    #     imageid="eats:latest",
-    #     volumes={f'{self.working_dir}/intermediate_steps/transform/{self.module}': {'bind': '/workplace/tests_transformed', 'mode': 'ro'},
-    #              f'{self.working_dir}/intermediate_steps/fuzzed_results/{self.module}': {'bind': '/workplace/fuzzed_results', 'mode': 'rw'}},
-    #     environment=['PYTHONPATH=/usr/src', f'atheris_runs={self.max_fuzz_iterations}', f'atheris_max_run_time={self.max_fuzz_time}'],
-    #     command='python /usr/src/scripts_fuzzer/runfuzz.py',
-    #     ))
-    #     logging.info(f"Running fuzzed_results: {self.module}, container.id: {container.id[:10]}")
-    #     exit_code, log, time_used = wait_for_container(container, self.max_fuzz_time * 30, f"{self.working_dir}/logs/fuzzed_results/{self.module}.log")
-    #     logging.info(f"fuzzed_results {self.module} exited with {exit_code}")
-    #     return exit_code, log, time_used
     
     def run_recreation_results(self):
         if not self.health:
@@ -122,6 +106,6 @@ class ImproveUseFuzzer:
         command='bash /usr/src/scripts_fuzzer/run_pynguin.sh',
         ))
         logging.info(f"Running pynguin: {self.module}, container.id: {container.id[:10]}")
-        exit_code, log, time_used = wait_for_container(container, self.maximum_pynguin_search_time * 3, f"{self.working_dir}/logs/finial_pynguin_results/{self.module}.log")
+        exit_code, log, time_used = wait_for_container(container, self.maximum_pynguin_search_time + 300, f"{self.working_dir}/logs/finial_pynguin_results/{self.module}.log")
         logging.info(f"finial_pynguin_results {self.module} exited with {exit_code}")
         return exit_code, log, time_used

@@ -7,6 +7,7 @@ pynguin \
     --maximum-iterations 300 \
     --initial-population-seeding 1 \
     --initial-population-data /workplace/recreation_results \
+    --seed 1 \
     -v
 
 python /usr/src/scripts_fuzzer/rename.py

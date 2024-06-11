@@ -33,6 +33,7 @@ if __name__ == "__main__":
         config.max_mutmut_time = int(eats_config['DEFAULT']['max_mutmut_time'])
         config.max_fuzz_time = int(eats_config['DEFAULT']['max_fuzz_time'])
         config.max_fuzz_iterations = int(eats_config['DEFAULT']['max_fuzz_iterations'])
+        config.imprve_with_fuzzing = eats_config['DEFAULT'].getboolean('imprve_with_fuzzing', True)
     except Exception as e:
         
         logging.error(f"Error in reading eats.ini: {e}")

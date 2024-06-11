@@ -25,11 +25,11 @@ def main(config: Config) -> int:
 
     if not config.module_names:
         logging.error("No modules to test")
-        return {}
-
-    os.path.exists(config.working_dir) or \
+        return 1
+    
+    if not os.path.exists(config.working_dir):
         os.makedirs(config.working_dir)
-    os.path.exists(os.path.join(config.working_dir, "logs")) or \
+    if not os.path.exists(os.path.join(config.working_dir, "logs")):
         os.makedirs(os.path.join(config.working_dir, "logs"))
     
     image, logs = build_docker_image(config.TARGET_PROGRAM_ROOT, 
@@ -50,23 +50,23 @@ def main(config: Config) -> int:
                        config.module_names, 
                        [f'{config.working_dir}/tests/pynguin_results'], 
                        "report1", 
-                       config.max_pynguin_search_time_first_search * 10, 
+                       config.max_mutmut_time + 300, 
                        config.MAX_WORKERS)
-
+        if not config.imprve_with_fuzzing:
+            return 0
         pendings = [ImproveUseFuzzer(module,
                                     config.working_dir, 
                                     config.max_fuzz_time,
                                     config.max_fuzz_iterations,
                                     config.max_pynguin_search_time_second_search,
                                     config.max_pynguin_iterations_second_search,
-                                    60 * 20) 
+                                    config.max_mutmut_time) 
                     for module in config.module_names]
     
         futures = [executor.submit(p.run_transform) for p in pendings]
         concurrent.futures.wait(futures)
         [future.result() for future in futures]  # Check for exceptions
 
-    # with concurrent.futures.ThreadPoolExecutor(max_workers=int(config.MAX_WORKERS / 3)) as executor:
         fuzzs = []
         for p in pendings:
             fuzzs += p.create_fuzz_runner()
@@ -74,7 +74,6 @@ def main(config: Config) -> int:
         concurrent.futures.wait(futures)
         [future.result() for future in futures]  # Check for exceptions
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=int(config.MAX_WORKERS)) as executor:
         futures = [executor.submit(p.run_recreation_results) for p in pendings]
         concurrent.futures.wait(futures)
         [future.result() for future in futures]  # Check for exceptions
@@ -85,7 +84,7 @@ def main(config: Config) -> int:
                        config.module_names, 
                        [f'{config.working_dir}/tests/pynguin_results', f'{config.working_dir}/tests/finial_pynguin_results'], 
                        "report2", 
-                       config.max_pynguin_search_time_first_search * 10, 
+                       config.max_mutmut_time + 300, 
                        config.MAX_WORKERS)
         logging.info("Finished creating reports")
     return 0
